@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "hello-world",
+    "title": "Hello, World",
+    "description": "Why this blog exists and what to expect.",
+    "date": "2025-08-14"
+  },
+  {
+    "slug": "second-post",
+    "title": "Ultra-Minimal Blogging",
+    "description": "No build tools. Just markdown files.",
+    "date": "2025-08-14"
+  }
+]

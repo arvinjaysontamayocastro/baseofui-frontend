@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Base of UI — Blog</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Markdown renderer (tiny, CDN) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <header class="wrap">
+    <h1><a href="./">Base of UI — Blog</a></h1>
+    <nav><a href="./">Home</a> · <a href="https://github.com/yourname/baseofui-blog" target="_blank">GitHub</a></nav>
+  </header>
+
+  <main class="wrap" id="app">
+    <div id="list"></div>
+    <article id="post" class="hidden">
+      <a href="./" class="back">← Back</a>
+      <h2 id="title"></h2>
+      <div id="content"></div>
+    </article>
+  </main>
+
+  <footer class="wrap">
+    © 2025 Base of UI
+  </footer>
+
+<script>
+(async function () {
+  const params = new URLSearchParams(location.search);
+  const slug = params.get("p"); // e.g., ?p=hello-world
+  const listEl = document.getElementById("list");
+  const postEl = document.getElementById("post");
+  const titleEl = document.getElementById("title");
+  const contentEl = document.getElementById("content");
+
+  const posts = await fetch("./posts/posts.json").then(r => r.json());
+
+  if (!slug) {
+    // List view
+    document.title = "Base of UI — Blog";
+    listEl.innerHTML = posts.map(p => `
+      <a class="card" href="?p=${encodeURIComponent(p.slug)}">
+        <h3>${p.title}</h3>
+        <p>${p.description}</p>
+        <small>${p.date}</small>
+      </a>
+    `).join("");
+    postEl.classList.add("hidden");
+    listEl.classList.remove("hidden");
+  } else {
+    // Post view
+    const post = posts.find(p => p.slug === slug);
+    if (!post) {
+      listEl.innerHTML = `<p>Post not found. <a href="./">Go home</a>.</p>`;
+      return;
+    }
+    titleEl.textContent = post.title;
+    const md = await fetch(`./posts/${post.slug}.md`).then(r => r.text());
+    contentEl.innerHTML = marked.parse(md);
+    document.title = `${post.title} — Base of UI`;
+    listEl.classList.add("hidden");
+    postEl.classList.remove("hidden");
+  }
+})();
+</script>
+</body>
+</html>
